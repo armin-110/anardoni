@@ -77,7 +77,27 @@ for i in range(len(cat_link)):
         data_frame.to_sql('anardoni_meta'+str(date_a.date()).replace('-','')+str(date_a.time()).split(':')[0],con,if_exists='append', index=False)
         # print(link_meta[0])
 
+import psycopg2
+import pandas.io.sql as psql
+def final_table():
+    connection = psycopg2.connect(user="postgres",
+                                    password="12344321",
+                                    host="10.32.141.17",
+                                    port="5432",
+                                    database="anardoni")
+    cursor = connection.cursor()
+    # postgreSQL_select_Query = "SELECT * FROM public.aparat_metatest0"
 
+    df= psql.read_sql("SELECT * FROM public.{}".format('anardoni_meta'+str(date_a.date()).replace('-','')+str(date_a.time()).split(':')[0]), connection)
+    print(len(df))
+
+    if connection:
+        cursor.close()
+        connection.close()
+
+    engine = create_engine('postgresql://postgres:12344321@10.32.141.17/anardoni',pool_size=20, max_overflow=100,)
+    con=engine.connect()
+    df.to_sql('anardoni_meta',con,if_exists='replace', index=False)
 
 # get_link_list('https://anardoni.com/ios/featured/magazines and newspapers')
 # print(get_link_list('https://anardoni.com/ios/featured/travel'))
